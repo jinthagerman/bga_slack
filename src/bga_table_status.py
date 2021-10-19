@@ -6,7 +6,6 @@ from logging.handlers import RotatingFileHandler
 from bga_account import BGAAccount
 from bga_game_list import get_game_list
 from bga_game_list import update_games_cache
-from creds_iface import get_discord_id
 from utils import normalize_name
 
 logging.getLogger("discord").setLevel(logging.WARN)
@@ -19,6 +18,14 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
+def get_current_player(table_data):
+    current_player_nbr = table_data["current_player_nbr"]
+    players = table_data["players"]
+    for _, player in players.items():
+        if int(player["table_order"]) == current_player_nbr:
+            return player
+
+    return None
 
 async def get_tables_by_players(players, message, send_running_tables=True, game_target=""):
     """Send running tables option is for integration where people don't want to see existing tables."""

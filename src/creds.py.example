@@ -1,0 +1,6 @@
+USERNAME = "username"
+PASSWORD = "password"
+WEBHOOK_URL = "webhook_url"
+TABLE_ID = "table_id"
+USERNAME_MAP = { "boardgamearena username": "slack user id"}
+ADDITIONAL_MESSAGES = ["additional messages"]

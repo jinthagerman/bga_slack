@@ -6,3 +6,4 @@
 .vscode*
 errs
 pid
+src/creds.py

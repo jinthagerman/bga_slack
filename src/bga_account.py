@@ -329,33 +329,6 @@ class BGAAccount:
             return -1
         return resp_json["items"][0]["id"]
 
-    def invite_player(self, table_id, player_id):
-        """Invite a player to a table you are creating."""
-        url = self.base_url + "/table/table/invitePlayer.html"
-        params = {
-            "table": table_id,
-            "player": player_id,
-            "dojo.preventCache": str(int(time.time())),
-        }
-        url += "?" + urllib.parse.urlencode(params)
-        resp = self.fetch(url)
-        resp_json = json.loads(resp)
-        if "status" in resp_json:
-            if resp_json["status"] == "0":
-                return resp_json["error"]
-            else:
-                return ""
-        else:
-            raise IOError("Problem encountered: " + str(resp))
-
-    def add_friend(self, friend_name):
-        friend_id = self.get_player_id(friend_name)
-        if friend_id == -1:
-            return f"Player {friend_name} not found. Make sure they exist and check spelling."
-        params = {"id": friend_id, "dojo.preventCache": str(int(time.time()))}
-        path = "?" + urllib.parse.urlencode(params)
-        self.fetch(self.base_url + "/community/community/addToFriend.html" + path)
-
     def get_tables(self, player_id):
         """Get all of the tables that a player is playing at. Tables are returned as json objects."""
         url = self.base_url + "/tablemanager/tablemanager/tableinfos.html"
@@ -383,27 +356,6 @@ class BGAAccount:
         else:
             num_moves = ""
         return game_progress, num_moves, table_url
-
-    def open_table(self, table_id):
-        """Function to open the table to other people for a specific table.
-        You must have created the table to be able to use this function.
-        example get url https://boardgamearena.com/table/table/openTableNow.html?table=121886720&dojo.preventCache=1604627527457
-        """
-        url = self.base_url + "/table/table/openTableNow.html"
-        params = {"table": table_id, "dojo.preventCache": str(int(time.time()))}
-        url += "?" + urllib.parse.urlencode(params)
-        self.fetch(url)
-
-    def message_player(self, player_name, msg_to_send):
-        url = self.base_url + "/table/table/say_private.html"
-        player_id = self.get_player_id(player_name)
-        if player_id == -1:
-            return f"Player {player_name} not found, so message not sent."
-        params = {"to": player_id, "msg": msg_to_send, "dojo.preventCache": str(int(time.time()))}
-        url += "?" + urllib.parse.urlencode(params)
-        logger.debug(f"Sending message to {player_name} with length {len(msg_to_send)}")
-        self.post(url, params)
-        return "Message sent"
 
     def close_connection(self):
         """Close the connection. aiohttp complains otherwise."""
