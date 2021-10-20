@@ -27,10 +27,10 @@ bga_account.login(USERNAME, PASSWORD)
 player_id = bga_account.get_player_id(USERNAME)
 tables_data = bga_account.get_tables(player_id)
 table_data = tables_data[TABLE_ID]
-player_data = get_current_player(table_data)
-current_player = USERNAME_MAP[player_data["fullname"]]
 previous_player = ""
-_, _, link = bga_account.get_table_metadata(table_data)
+_, _, current_player_id, link = bga_account.get_table_metadata(table_data)
+player_data = get_current_player(table_data, current_player_id)
+current_player = USERNAME_MAP[player_data["fullname"]]
 
 try:
     with open("current_player", "r") as text_file:

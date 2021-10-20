@@ -18,14 +18,8 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
-def get_current_player(table_data):
-    current_player_nbr = table_data["current_player_nbr"]
-    players = table_data["players"]
-    for _, player in players.items():
-        if int(player["table_order"]) == current_player_nbr:
-            return player
-
-    return None
+def get_current_player(table_data, player_id):
+    return table_data["players"][player_id]
 
 async def get_tables_by_players(players, message, send_running_tables=True, game_target=""):
     """Send running tables option is for integration where people don't want to see existing tables."""

@@ -355,7 +355,12 @@ class BGAAccount:
             num_moves = num_moves_match[1]
         else:
             num_moves = ""
-        return game_progress, num_moves, table_url
+        current_player_match = re.search('active_player":"([^"]*)"', resp)
+        if current_player_match:
+            current_player = current_player_match[1]
+        else:
+            current_player = ""
+        return game_progress, num_moves, current_player, table_url
 
     def close_connection(self):
         """Close the connection. aiohttp complains otherwise."""
