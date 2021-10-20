@@ -11,6 +11,7 @@ from slack_sdk.webhook import WebhookClient
 from bga_table_status import get_current_player
 from bga_account import BGAAccount
 from utils import send_help, force_double_quotes
+from bga_agricola import is_harvest_round
 
 LOG_FILENAME = "errs"
 logger = logging.getLogger(__name__)
@@ -28,10 +29,19 @@ player_id = bga_account.get_player_id(USERNAME)
 tables_data = bga_account.get_tables(player_id)
 table_data = tables_data[TABLE_ID]
 previous_player = ""
-_, _, current_player_id, link = bga_account.get_table_metadata(table_data)
+progress, _, current_player_id, link = bga_account.get_table_metadata(table_data)
 player_data = get_current_player(table_data, current_player_id)
 current_player_name = player_data["fullname"]
 current_player = USERNAME_MAP[current_player_name]
+game_name = table_data["game_name"]
+
+message_text = f':game_die: *<@{current_player}>, It\'s your turn!* <{link}|Link>'
+
+if game_name == "agricola" and is_harvest_round(progress):
+    logger.debug(f'############### This is a harvest round')
+    message_text += "\n:bread: Don't forget food, this is a harvest round! :corn:"
+else:
+    message_text += f"\n{random.choice(ADDITIONAL_MESSAGES)}"
 
 try:
     with open("current_player", "r") as text_file:
@@ -49,7 +59,7 @@ if current_player != previous_player:
     logger.debug(f'+++++++++++++++ current_player is now {current_player_name}')
     with open("current_player", "w") as text_file:
         webhook = WebhookClient(WEBHOOK_URL)
-        webhook.send(text=f':game_die: *<@{current_player}>, It\'s your turn!* <{link}|Link>\n{random.choice(ADDITIONAL_MESSAGES)}')
+        webhook.send(text=message_text)
         text_file.write(current_player)
 else:
     logger.debug(f'+++++++++++++++ current_player is still {current_player_name}')

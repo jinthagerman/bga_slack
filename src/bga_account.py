@@ -345,7 +345,7 @@ class BGAAccount:
         game_name = table_data["game_name"]
         table_url = f"{self.base_url}/{game_server}/{game_name}?table={table_id}"
         resp = self.fetch(table_url)
-        game_progress_match = re.search('updateGameProgression":"([^"]*)"', resp)
+        game_progress_match = re.search('updateGameProgression\":([\d]+)}', resp)
         if game_progress_match:
             game_progress = game_progress_match[1]
         else:
