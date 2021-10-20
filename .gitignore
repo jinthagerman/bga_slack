@@ -7,3 +7,5 @@
 errs
 pid
 src/creds.py
+current_player
+src/current_player

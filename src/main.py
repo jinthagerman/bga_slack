@@ -35,10 +35,12 @@ current_player = USERNAME_MAP[player_data["fullname"]]
 try:
     with open("current_player", "r") as text_file:
         previous_player = text_file.read().rstrip()
+        logger.debug(f'previous_player was {previous_player}')
 except FileNotFoundError:
     logger.debug("current_player file not found. Will create it")
 
 if current_player != previous_player:
+    logger.debug(f'current_player is now {player_data["fullname"]}')
     with open("current_player", "w") as text_file:
         webhook = WebhookClient(WEBHOOK_URL)
         webhook.send(text=f':game_die: *<@{current_player}>, It\'s your turn!* <{link}|Link>\n{random.choice(ADDITIONAL_MESSAGES)}')
