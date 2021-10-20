@@ -30,20 +30,26 @@ table_data = tables_data[TABLE_ID]
 previous_player = ""
 _, _, current_player_id, link = bga_account.get_table_metadata(table_data)
 player_data = get_current_player(table_data, current_player_id)
-current_player = USERNAME_MAP[player_data["fullname"]]
+current_player_name = player_data["fullname"]
+current_player = USERNAME_MAP[current_player_name]
 
 try:
     with open("current_player", "r") as text_file:
         previous_player = text_file.read().rstrip()
-        logger.debug(f'--------------- previous_player was {previous_player}')
+        for bga_name, slack_id in USERNAME_MAP.items():
+            if slack_id == previous_player:
+                previous_player_name = bga_name
+                break
+        if current_player_name != previous_player_name:
+            logger.debug(f'--------------- previous_player was {previous_player_name}')
 except FileNotFoundError:
     logger.debug("--------------- current_player file not found. Will create it")
 
 if current_player != previous_player:
-    logger.debug(f'+++++++++++++++ current_player is now {player_data["fullname"]}')
+    logger.debug(f'+++++++++++++++ current_player is now {current_player_name}')
     with open("current_player", "w") as text_file:
         webhook = WebhookClient(WEBHOOK_URL)
         webhook.send(text=f':game_die: *<@{current_player}>, It\'s your turn!* <{link}|Link>\n{random.choice(ADDITIONAL_MESSAGES)}')
         text_file.write(current_player)
 else:
-    logger.debug(f'+++++++++++++++ current_player is still {player_data["fullname"]}')
+    logger.debug(f'+++++++++++++++ current_player is still {current_player_name}')
