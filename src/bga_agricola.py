@@ -7,6 +7,6 @@ def is_harvest_round(progress):
     harvest_rounds = [4, 7, 9, 11, 13, 14]
     for harvest_round in harvest_rounds:
         abs_progress = progress_per_round * harvest_round
-        if math.floor(abs_progress) == progress or math.ceil(abs_progress) == progress:
+        if math.floor(abs_progress) == progress_number or math.ceil(abs_progress) == progress_number:
             return True
     return False
