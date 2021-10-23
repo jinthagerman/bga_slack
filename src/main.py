@@ -10,7 +10,7 @@ from creds import USERNAME, PASSWORD, TABLE_ID, USERNAME_MAP, WEBHOOK_URL, ADDIT
 from slack_sdk.webhook import WebhookClient
 from bga_table_status import get_current_player
 from bga_account import BGAAccount
-from utils import send_help, force_double_quotes
+from utils import send_help, force_double_quotes, saveListToFile, readListFromFile, pickRandomMessage
 from bga_agricola import is_harvest_round
 
 LOG_FILENAME = "errs"
@@ -37,11 +37,11 @@ game_name = table_data["game_name"]
 
 message_text = f':game_die: *<@{current_player}>, It\'s your turn!* <{link}|Link>'
 
+other_message = False
 if game_name == "agricola" and is_harvest_round(progress):
     logger.debug(f'############### This is a harvest round')
     message_text += "\n:bread: Don't forget food, this is a harvest round! :corn:"
-else:
-    message_text += f"\n{random.choice(ADDITIONAL_MESSAGES)}"
+    other_message = True
 
 try:
     with open("current_player", "r") as text_file:
@@ -58,6 +58,8 @@ except FileNotFoundError:
 if current_player != previous_player:
     logger.debug(f'+++++++++++++++ current_player is now {current_player_name}')
     with open("current_player", "w") as text_file:
+        if not other_message:
+            message_text += f"\n{pickRandomMessage(ADDITIONAL_MESSAGES)}"
         webhook = WebhookClient(WEBHOOK_URL)
         webhook.send(text=message_text)
         text_file.write(current_player)

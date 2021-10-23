@@ -1,7 +1,7 @@
 """Utils for various parts of this program"""
 from urllib.parse import urlparse
 import re
-
+import random
 
 # Via https://stackoverflow.com/questions/7160737/how-to-validate-a-url-in-python-malformed-or-not
 def is_url(url):
@@ -11,6 +11,27 @@ def is_url(url):
     except ValueError:
         return False
 
+def saveListToFile(list, filename):
+    with open(filename, "w") as text_file:
+        for item in list:
+            text_file.write(item + '\n')
+
+def readListFromFile(filename):
+    try:
+        with open(filename, "r") as text_file:
+            return text_file.read().splitlines()
+    except FileNotFoundError:
+        return []
+
+def pickRandomMessage(ADDITIONAL_MESSAGES):
+    RANDOM_MESSAGES_FILENAME = "random_messages"
+    additional_messages = readListFromFile(RANDOM_MESSAGES_FILENAME)
+    if len(additional_messages) == 0:
+        random.shuffle(ADDITIONAL_MESSAGES)
+        additional_messages = ADDITIONAL_MESSAGES
+    additional_message = additional_messages.pop(0)
+    saveListToFile(additional_messages, RANDOM_MESSAGES_FILENAME)
+    return additional_message
 
 def reset_context(contexts, author):
     """End the current interactive session by deleting info about it."""

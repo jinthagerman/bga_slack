@@ -7,5 +7,8 @@
 errs
 pid
 src/creds.py
+src/creds.py.backup
 current_player
 src/current_player
+random_messages
+src/random_messages
