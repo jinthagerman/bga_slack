@@ -2,6 +2,18 @@
 from urllib.parse import urlparse
 import re
 import random
+import logging
+from logging.handlers import RotatingFileHandler
+
+logging.getLogger("slack").setLevel(logging.WARN)
+
+LOG_FILENAME = "errs"
+logger = logging.getLogger(__name__)
+handler = RotatingFileHandler(LOG_FILENAME, maxBytes=10000000, backupCount=0)
+formatter = logging.Formatter("%(asctime)s | %(name)s | %(levelname)s | %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
 
 # Via https://stackoverflow.com/questions/7160737/how-to-validate-a-url-in-python-malformed-or-not
 def is_url(url):
@@ -26,7 +38,9 @@ def readListFromFile(filename):
 def pickRandomMessage(ADDITIONAL_MESSAGES):
     RANDOM_MESSAGES_FILENAME = "random_messages"
     additional_messages = readListFromFile(RANDOM_MESSAGES_FILENAME)
+    logger.debug(f'{len(additional_messages)}" messages left in {RANDOM_MESSAGES_FILENAME}')
     if len(additional_messages) == 0:
+        logger.debug(f'Repopulating {RANDOM_MESSAGES_FILENAME} with responses')
         random.shuffle(ADDITIONAL_MESSAGES)
         additional_messages = ADDITIONAL_MESSAGES
     additional_message = additional_messages.pop(0)

@@ -8,7 +8,7 @@ from bga_game_list import get_game_list
 from bga_game_list import update_games_cache
 from utils import normalize_name
 
-logging.getLogger("discord").setLevel(logging.WARN)
+logging.getLogger("slack").setLevel(logging.WARN)
 
 LOG_FILENAME = "errs"
 logger = logging.getLogger(__name__)
